@@ -1,141 +1,117 @@
-# Proyecto App Prepaga
+# 🏥 Proyecto App Prepaga
 
-## 🎯 Objetivo
-Desarrollar un sistema básico de gestión para una prepaga de salud, simulando un entorno real, con el fin de aplicar conocimientos técnicos y demostrar habilidades en diseño, desarrollo backend, manejo de base de datos y reglas de negocio.
+## 📌 Descripción general
 
-La aplicación permitirá:
-- Administrar afiliados y sus planes de salud
-- Gestionar especialidades y especialistas
-- Asignar turnos médicos
-- Calcular pagos, descuentos y sueldos
-- Enviar notificaciones automáticas por email
+Este proyecto consiste en el desarrollo de una **aplicación de gestión de una prepaga de salud**, orientada a simular un sistema real de negocio para aplicar conceptos de **análisis de sistemas, modelado de datos y desarrollo backend**.
+
+La aplicación permite administrar afiliados, planes, turnos médicos, historia clínica, prestaciones, facturación y beneficios, siguiendo reglas de negocio similares a las utilizadas por prepagas reales.
+
+El sistema se desarrolla inicialmente como **arquitectura monolítica**, con la idea de **migrar a microservicios en una etapa posterior**.
 
 ---
 
-## 🏥 Descripción del sistema
+## 🎯 Objetivos del proyecto
 
-La prepaga cuenta con un sistema de afiliados que eligen entre distintos planes de salud. Cada plan posee beneficios específicos, como porcentajes de descuento en consultas médicas y medicamentos.
-
-El sistema se encargará de:
-
-- Administrar afiliados con sus respectivos planes
-- Llevar un historial de consumos (consultas y medicamentos)
-- Gestionar turnos médicos con especialistas
-- Calcular el sueldo de los especialistas (sueldo base + % por consulta)
-- Manejar la facturación mensual del afiliado
-
-### 📅 Turnos
-
-- Cada turno tiene una duración de **20 minutos**
-- Se pueden asignar turnos hasta **4 meses en adelante**
-- Se notificará al afiliado por email **48 horas antes del turno**, indicando:
-  - Fecha
-  - Hora
-  - Especialista
+* Aplicar conceptos de **ingeniería de software** y **análisis de negocio**.
+* Diseñar un **modelo de datos robusto y realista**.
+* Implementar un backend escalable y mantenible.
+* Simular procesos reales de una prepaga (turnos, consultas, estudios, facturación).
+* Servir como **proyecto demostrable** para entrevistas laborales en el área backend.
 
 ---
 
-## 💳 Pagos y facturación
+## 🧠 Alcance funcional
 
-- Las consultas y medicamentos pueden:
-  - Pagarse en el momento
-  - O acumularse en la factura mensual del plan
-- Cada **30 días desde el primer pago**, el afiliado deberá abonar su plan
-- Se enviará una notificación por email con:
-  - Importe
-  - Nombre del plan
-- El afiliado tendrá un plazo de **10 días** para pagar antes de quedar **sin beneficios (inhabilitado)**
+### 👤 Afiliados
 
----
+* Alta, baja y modificación de afiliados.
+* Asociación de afiliados a planes (histórico de planes).
+* Gestión de estado del afiliado (habilitado / suspendido).
 
-## 📚 Entidades principales
+### 📄 Planes y beneficios
 
-### Usuario
-- Rango (admin / afiliado / especialista)
-- Usuario
-- Contraseña
-- Afiliado (si corresponde)
-- Especialista (si corresponde)
+* Gestión de planes de salud.
+* Asociación de beneficios a planes.
+* Beneficios reutilizables entre distintos planes.
+* Definición de descuentos y vigencias.
 
-### Afiliado
-- Número de afiliado  
-- Nombre  
-- Apellido  
-- Plan  
-- Estado (habilitado / inhabilitado)  
-- Deuda  
-- Historial de consumos  
-- Email  
-- Fecha de alta  
+### 🗓️ Turnos médicos
 
-### Especialista
-- Número de matrícula  
-- Especialidad  
-- Nombre  
-- Apellido  
-- Historial de pacientes  
-- Sueldo base  
+* Asignación de turnos entre afiliados y especialistas.
+* Estados de turno (pendiente, cancelado, atendido, ausente, etc.).
 
-### Plan
-- Costo  
-- Descripción de beneficios  
-- Porcentaje de descuento en consultas  
-- Porcentaje de descuento en medicamentos  
-- Beneficios (internación, visitas médicas, etc)  
+### 🩺 Historia clínica
 
-### Turno
-- Fecha y hora  
-- Especialista  
-- Afiliado (si está asignado)  
+* Historia clínica única por afiliado.
+* Registro clínico por cada atención médica.
+* Asociación de registros clínicos a turnos.
 
-### Especialidad
-- Descripción  
-- Turnos disponibles  
-- Especialistas asociados  
+### 💊 Prestaciones
 
----
+* Registro de prestaciones realizadas durante una atención:
 
-## ⚙️ Funcionalidades principales
+  * Consultas
+  * Tratamientos
+  * Medicamentos
+  * Estudios
+* Cantidad, receta e indicaciones.
 
-✅ Validación de usuarios  
-✅ Asignación de turnos  
-✅ Notificación de turnos por email  
-✅ Notificación de vencimiento del plan  
-✅ Cálculo automático del valor de prestaciones  
-✅ Cálculo del sueldo del especialista  
-✅ Control de estado del afiliado (habilitado / inhabilitado)  
+### 🧪 Estudios
 
----
+* Estudios médicos como un tipo de prestación.
+* Registro de resultados (texto o archivo adjunto).
 
-## 🧪 Reglas de negocio importantes
+### 💰 Facturación
 
-- Un afiliado solo puede sacar turnos si está **habilitado**
-- Un especialista sólo puede atender turnos de su especialidad
-- Si el afiliado no paga dentro del plazo, pasa a estado **inhabilitado**
-- Los descuentos dependen del plan contratado
-- El sueldo del especialista se calcula por:
-  ```
-  sueldo = sueldo_base + (consultas_realizadas * porcentaje)
-  ```
+* Generación de facturas mensuales por afiliado.
+* Ítems de factura:
+
+  * Cuota del plan
+  * Consultas
+  * Prestaciones
+  * Estudios
+  * Ítems manuales (gastos externos)
+* Soporte para carga manual validada por administrativos.
+* Cálculo de importes y totales.
+
+
+
+## 🛠️ Tecnologías
+
+### Backend
+
+* **Node.js**
+* **TypeScript**
+* **Express**
+
+### Base de datos
+
+* **Oracle (PL/SQL)**
+* Docker para entorno local
+
+### Herramientas
+
+* Git
+* Docker
+* Postman
 
 ---
 
-## 🛠 Tecnologías utilizadas
+## 🧱 Arquitectura
 
-**Backend**
-- Node.js
-- TypeScript
-- Express
+* Arquitectura **monolítica** en esta primera etapa.
+* Separación por capas:
 
-**Base de Datos**
-- Oracle / PL SQL
-- Docker
+  * Controllers
+  * Services
+  * Repositories
+  * Domain / Models
+* Diseño preparado para futura **migración a microservicios** (facturación, turnos, historia clínica).
 
-**Otros**
-- Git / GitHub
-- Nodemailer (para notificaciones)
-- Arquitectura REST
-- Posible implementación futura de microservicios
+---
 
-**Frontend (a definir)**
-- Angular / React / Next.js (opcional)
+## 👤 Autor
+
+**Facundo Speranza**
+Estudiante de Ingeniería en Sistemas
+Perfil orientado a backend, análisis y diseño de sistemas.
