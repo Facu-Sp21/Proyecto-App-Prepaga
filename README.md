@@ -83,6 +83,7 @@ El sistema se desarrolla inicialmente como **arquitectura monolítica**, con la 
 * **Node.js**
 * **TypeScript**
 * **Express**
+* **Zod** para validacion de datos  
 
 ### Base de datos
 
