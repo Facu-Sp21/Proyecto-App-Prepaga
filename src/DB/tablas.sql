@@ -5,7 +5,7 @@ CREATE TABLE afiliado (
     nombre       VARCHAR2(50) NOT NULL,
     apellido     VARCHAR2(50) NOT NULL,
     email        VARCHAR2(100),
-    CONSTRAINT uq_dni UNIQUE (dni_numero, dni_tipo)
+    CONSTRAINT uq_afiliado_dni UNIQUE (dni_numero, dni_tipo)
 );
 
 CREATE TABLE especialista(
@@ -22,15 +22,21 @@ CREATE TABLE especialidad(
 
 CREATE TABLE especialista_especialidad(
     id_especialidad NUMBER NOT NULL,
-    nro_matricula VARCHAR2 NOT NULL,
+    nro_matricula VARCHAR2(12) NOT NULL,
     
     CONSTRAINT pk_especialista_especialidad PRIMARY KEY (id_especialidad,nro_matricula),
     
     CONSTRAINT fk_especialidad FOREIGN KEY (id_especialidad)
         REFERENCES especialidad(id_especialidad),
-    CONSTRAINT fk_especialista FOREIGN KEY (id_especialista)
-        REFERENCES especialista(id_especialista)
+    CONSTRAINT fk_especialista FOREIGN KEY (nro_matricula)
+        REFERENCES especialista(nro_matricula)
 );
+
+CREATE TABLE estado_turno (
+    id_estado NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY ,
+    descripcion VARCHAR2(15) NOT NULL
+);
+
 
 CREATE TABLE turno (
     id_turno NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY ,
@@ -38,20 +44,16 @@ CREATE TABLE turno (
     nro_matricula VARCHAR2(12) NOT NULL,
     fecha_hora DATE NOT NULL,
     estado NUMBER NOT NULL,
-    CONSTRAINT fk_nro_afiliado FOREIGN KEY (nro_afiliado) 
+    CONSTRAINT fk_turno_nro_afiliado FOREIGN KEY (nro_afiliado) 
         REFERENCES afiliado(nro_afiliado),
-    CONSTRAINT fk_nro_matricula FOREIGN KEY (nro_matricula) 
+    CONSTRAINT fk_turno_nro_matricula FOREIGN KEY (nro_matricula) 
         REFERENCES especialista(nro_matricula),
-    CONSTRAINT fk_estado FOREIGN KEY (estado)
+    CONSTRAINT fk_turno_estado FOREIGN KEY (estado)
         REFERENCES estado_turno(id_estado),
         
-    CONSTRAINT uk_fecha_afiliados_matricula UNIQUE (nro_afiliado, nro_matricula,fecha_hora)
+    CONSTRAINT uk_fecha_afiliado_matricula UNIQUE (nro_afiliado, nro_matricula,fecha_hora)
     );
 
-CREATE TABLE estado_turno (
-    id_estado NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY ,
-    descripcion VARCHAR2(15) NOT NULL
-);
 
 CREATE TABLE historia_clinica (
     id_hc NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -63,7 +65,7 @@ CREATE TABLE historia_clinica (
     alergias VARCHAR2(200) NULL ,
     contacto_emergencia VARCHAR2(20) NOT NULL,
     
-    CONSTRAINT fk_afiliado FOREIGN KEY (nro_afiliado)
+    CONSTRAINT fk_hc_afiliado FOREIGN KEY (nro_afiliado)
         REFERENCES afiliado (nro_afiliado)
 );
 
@@ -75,49 +77,63 @@ CREATE TABLE vacuna (
 CREATE TABLE hc_vacuna (
     id_hc NUMBER NOT NULL,
     id_vacuna NUMBER NOT NULL,
-    fecha_aplicacion DATE,
+    fecha_aplicacion DATE NOT NULL,
     
-    CONSTRAINT pk_historia_vacunas PRIMARY KEY (id_hc, id_vacuna),
-    CONSTRAINT fk_historia FOREIGN KEY (id_hc) 
+    CONSTRAINT pk_historia_clinca_vacunas PRIMARY KEY (id_hc, id_vacuna),
+    CONSTRAINT fk_historia_clinica FOREIGN KEY (id_hc) 
         REFERENCES historia_clinica (id_hc),
     CONSTRAINT fk_vacuna FOREIGN KEY (id_vacuna) 
         REFERENCES vacuna (id_vacuna)
 );
-
-CREATE TABLE registro_clinico(
-    id_rc NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    id_hc NUMBER NOT NULL,
-    nro_matricula NUMBER NOT NULL,
-    id_prestacion NUMBER,
-    fecha_registro DATE,
-    
-    
-    CONSTRAINT fk_hc FOREIGN KEY (id_hc)
-        REFERENCES historia_clinica(id_hc),
-    CONSTRAINT fk_especialista FOREIGN KEY (nro_matricula)
-        REFERENCES especialista(nro_matricula),
-    CONSTRAINT fk_prestacion FOREIGN KEY (id_prestacion)
-        REFERENCES prestacion(id_prestacion)
-);
-
-CREATE TABLE prestacion(
-    id_prestacion NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    tipo_prestacion NUMBER NOT NULL,
-    nombre VARCHAR2(40) NOT NULL,
-    
-    CONSTRAINT fk_tipo_prestacion FOREIGN KEY (tipo_prestacion)
-        REFERENCES tipo_prestacion(id_tipo_prestacion)
-    );
 
 CREATE TABLE tipo_prestacion (
     id_tipo_prestacion NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     nombre VARCHAR2(20) NOT NULL
 ) ;
 
+CREATE TABLE prestacion(
+    id_prestacion NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    tipo_prestacion NUMBER NOT NULL,
+    nombre VARCHAR2(40) NOT NULL,
+    
+    CONSTRAINT fk_prestacion_tipo_prestacion FOREIGN KEY (tipo_prestacion)
+        REFERENCES tipo_prestacion(id_tipo_prestacion)
+    );
+
+CREATE TABLE precio_prestacion(
+    id_precio NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id_prestacion NUMBER NOT NULL,
+    valor NUMBER(9) NOT NULL,
+    fecha_desde DATE NOT NULL,
+    fecha_hasta DATE NOT NULL,
+    
+    CONSTRAINT uk_fecha_valor_prestacion UNIQUE(id_prestacion, fecha_desde),
+    CONSTRAINT chk_fechas_precio_prestacion CHECK (fecha_hasta > fecha_desde),
+    CONSTRAINT fk_precio_prestacion FOREIGN KEY (id_prestacion)
+        REFERENCES prestacion(id_prestacion)
+    );
+    
+CREATE TABLE registro_clinico(
+    id_rc NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id_hc NUMBER NOT NULL,
+    nro_matricula VARCHAR2(12) NOT NULL,
+    id_prestacion NUMBER NOT NULL,
+    fecha_registro DATE NOT NULL,
+    
+    
+    CONSTRAINT fk_rc_hc FOREIGN KEY (id_hc)
+        REFERENCES historia_clinica(id_hc),
+    CONSTRAINT fk_rc_especialista FOREIGN KEY (nro_matricula)
+        REFERENCES especialista(nro_matricula),
+    CONSTRAINT fk_rc_prestacion FOREIGN KEY (id_prestacion)
+        REFERENCES prestacion(id_prestacion)
+);
+
+
 CREATE TABLE estudio(
     id_prestacion NUMBER PRIMARY KEY,
     descripcion VARCHAR2(100) NULL,
-    CONSTRAINT fk_prestacion FOREIGN KEY (id_prestacion)
+    CONSTRAINT fk_estudio_prestacion FOREIGN KEY (id_prestacion)
         REFERENCES prestacion(id_prestacion)
 );
 
@@ -132,7 +148,7 @@ CREATE TABLE estudio_rc(
     
     CONSTRAINT fk_estudio FOREIGN KEY (id_estudio)
         REFERENCES estudio(id_prestacion),
-    CONSTRAINT fk_rc FOREIGN KEY (id_rc)
+    CONSTRAINT fk_estudio_rc FOREIGN KEY (id_rc)
         REFERENCES registro_clinico(id_rc)
     );
 
@@ -141,13 +157,13 @@ CREATE TABLE medicamento(
     presentacion VARCHAR2(50) NOT NULL,
     laboratorio VARCHAR2(50) NOT NULL,
     
-    CONSTRAINT fk_prestacion FOREIGN KEY (id_prestacion)
+    CONSTRAINT fk_medicamento_prestacion FOREIGN KEY (id_prestacion)
         REFERENCES prestacion(id_prestacion)
-)
+);
 
 CREATE TABLE medicamento_rc(
-    id_medicamento NUMBER,
-    id_rc NUMBER,
+    id_medicamento NUMBER NOT NULL,
+    id_rc NUMBER NOT NULL,
     cantidad NUMBER NOT NULL,
     indicaciones VARCHAR2(150) NOT NULL,
     
@@ -155,23 +171,23 @@ CREATE TABLE medicamento_rc(
     
     CONSTRAINT fk_medicamento FOREIGN KEY (id_medicamento)
         REFERENCES medicamento(id_prestacion),
-    CONSTRAINT fk_rc FOREIGN KEY (id_rc)
+    CONSTRAINT fk_medicamento_rc FOREIGN KEY (id_rc)
         REFERENCES registro_clinico(id_rc)
-)
+);
 
 CREATE TABLE consulta(
-    id_prestacion NUMBER ,
+    id_prestacion NUMBER PRIMARY KEY,
     id_especialidad NUMBER NOT NULL,
     
-    CONSTRAINT pk_consulta PRIMARY KEY(id_prestacion,id_especialidad),
+    CONSTRAINT uk_consulta_especialidad UNIQUE (id_especialidad),
     
-    CONSTRAINT fk_prestacion FOREIGN KEY (id_prestacion)
+    CONSTRAINT fk_consulta_prestacion FOREIGN KEY (id_prestacion)
         REFERENCES prestacion(id_prestacion)
 );
 
 CREATE TABLE consulta_rc(
-    id_consulta NUMBER,
-    id_rc NUMBER,
+    id_consulta NUMBER NOT NULL,
+    id_rc NUMBER NOT NULL,
     motivo_consulta VARCHAR2(20) NOT NULL,
     observaciones VARCHAR2(500) NOT NULL,
     diagnostico VARCHAR2(500) NULL,
@@ -181,20 +197,20 @@ CREATE TABLE consulta_rc(
     
     CONSTRAINT fk_consulta FOREIGN KEY (id_consulta)
         REFERENCES consulta(id_prestacion),
-    CONSTRAINT fk_rc FOREIGN KEY (id_rc)
+    CONSTRAINT fk_consulta_rc FOREIGN KEY (id_rc)
         REFERENCES registro_clinico(id_rc)
 );
 
 CREATE TABLE tratamiento(
     id_prestacion NUMBER PRIMARY KEY,
     
-    CONSTRAINT fk_prestacion FOREIGN KEY (id_prestacion)
+    CONSTRAINT fk_tratamiento_prestacion FOREIGN KEY (id_prestacion)
         REFERENCES prestacion(id_prestacion)
 );
 
 CREATE TABLE tratamiento_rc(
-    id_tratamiento NUMBER,
-    id_rc NUMBER,
+    id_tratamiento NUMBER NOT NULL,
+    id_rc NUMBER NOT NULL,
     cantidad_seciones NUMBER(3) NULL,
     respuesta_paciente VARCHAR2(300) NOT NULL,
     
@@ -202,7 +218,7 @@ CREATE TABLE tratamiento_rc(
     
     CONSTRAINT fk_tratamiento FOREIGN KEY (id_tratamiento)
         REFERENCES tratamiento(id_prestacion),
-    CONSTRAINT fk_rc FOREIGN KEY (id_rc)
+    CONSTRAINT fk_tratamiento_rc FOREIGN KEY (id_rc)
         REFERENCES registro_clinico(id_rc)
 
 );
@@ -221,9 +237,9 @@ CREATE TABLE precio_plan(
     valor NUMBER(8) NOT NULL,
     
     CONSTRAINT uk_fecha_valor UNIQUE(id_plan, fecha_desde),
-    CONSTRAINT chk_fechas_precio CHECK (fecha_hasta > fecha_desde),
+    CONSTRAINT chk_fechas_precio_plan CHECK (fecha_hasta > fecha_desde),
     
-    CONSTRAINT fk_planes FOREIGN KEY (id_plan)
+    CONSTRAINT fk_precio_plan FOREIGN KEY (id_plan)
         REFERENCES plan(id_plan)
     );
     
@@ -233,22 +249,23 @@ CREATE TABLE  beneficio(
 );
 
 CREATE TABLE beneficio_plan (
-    id_plan NUMBER,
-    id_beneficio NUMBER,
+    id_plan NUMBER NOT NULL,
+    id_beneficio NUMBER NOT NULL,
     cantidad_descuento NUMBER NOT NULL,
     fecha_desde DATE NOT NULL,
     fecha_fin DATE NOT NULL,
     
     CONSTRAINT pk_beneficio_plan PRIMARY KEY (id_plan,id_beneficio),
     
-    CONSTRAINT fk_beneficio FOREIGN KEY (id_beneficio)
-        REFERENCES beneficio(id_beneficio)
-        
+    CONSTRAINT fk_beneficio_plan_beneficio FOREIGN KEY (id_beneficio)
+        REFERENCES beneficio(id_beneficio),
+    CONSTRAINT fk_beneficio_plan_plan FOREIGN KEY (id_plan)
+        REFERENCES plan(id_plan)     
     );
 
 CREATE TABLE afiliado_plan (
-    id_plan NUMBER,
-    nro_afiliado NUMBER,
+    id_plan NUMBER NOT NULL,
+    nro_afiliado NUMBER NOT NULL,
     fecha_hasta DATE NOT NULL,
     fecha_desde DATE NOT NULL,
     
@@ -256,9 +273,9 @@ CREATE TABLE afiliado_plan (
     
     CONSTRAINT chk_fechas_precio CHECK (fecha_hasta > fecha_desde),
     
-    CONSTRAINT fk_plan FOREIGN KEY (id_plan)
+    CONSTRAINT fk_afiliado_plan_plan FOREIGN KEY (id_plan)
         REFERENCES plan(id_plan),
-    CONSTRAINT fk_nro_afiliado FOREIGN KEY (nro_afiliado)
+    CONSTRAINT fk_afiliado_plan_nro_afiliado FOREIGN KEY (nro_afiliado)
         REFERENCES afiliado(nro_afiliado)
     );
     
@@ -270,7 +287,7 @@ CREATE TABLE factura(
     fecha_emision DATE NOT NULL,
     fecha_vencimiento DATE NOT NULL,
     
-    CONSTRAINT fk_nro_afiliado FOREIGN KEY (nro_afiliado)
+    CONSTRAINT fk_factura_nro_afiliado FOREIGN KEY (nro_afiliado)
         REFERENCES afiliado(nro_afiliado)
     );
     
@@ -283,6 +300,7 @@ CREATE TABLE factura_item(
     porcentaje_desc NUMBER(3) NULL,
     total NUMBER(8) NOT NULL,
     
-    CONSTRAINT fk_factura FOREIGN KEY (id_factura)
+    CONSTRAINT fk_factura_item_factura FOREIGN KEY (id_factura)
         REFERENCES factura(id_factura)
 );
+
