@@ -30,6 +30,7 @@ out/
 *.env.development
 *.env.production
 *.env.test
+dev.env
 
 # IDE / Editor configs
 .vscode/

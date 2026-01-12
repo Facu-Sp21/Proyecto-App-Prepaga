@@ -84,8 +84,6 @@ Esto permite:
 
 ---
 
-
-
 ## 🛠️ Stack tecnológico
 
 * Backend: Node.js + TypeScript + Express + Zod

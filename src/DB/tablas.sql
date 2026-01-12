@@ -1,6 +1,6 @@
 CREATE TABLE afiliado (
     nro_afiliado NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    dni_numero   NUMBER(8) NOT NULL,
+    dni_numero   VARCHAR2(8) NOT NULL,
     dni_tipo     VARCHAR2(10) NOT NULL,
     nombre       VARCHAR2(50) NOT NULL,
     apellido     VARCHAR2(50) NOT NULL,
