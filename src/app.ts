@@ -1,8 +1,11 @@
 import express from 'express';
 import { afiliadoRouter } from './Afiliado/routes.js'; 
 import dotenv from "dotenv";
+import { initDB } from './DB/connection.js';
 
 dotenv.config();
+
+await initDB();
 
 const app = express();
 

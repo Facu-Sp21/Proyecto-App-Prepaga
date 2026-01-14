@@ -16,11 +16,7 @@ declare module "oracledb" {
     close(force?: boolean): Promise<void>;
   }
 
-  export function getConnection(config: {
-    user: string;
-    password: string;
-    connectString: string;
-  }): Promise<Connection>;
+  export function getConnection(): Promise<Connection>;
 
   export function createPool(config: {
     user: string;
@@ -29,6 +25,7 @@ declare module "oracledb" {
     poolMin?: number;
     poolMax?: number;
     poolIncrement?: number;
+    queueTimeout?: number;
   }): Promise<Pool>;
 
   export const OUT_FORMAT_OBJECT: number;

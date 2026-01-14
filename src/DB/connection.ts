@@ -20,6 +20,7 @@ export async function initDB() {
     poolMin: 1,
     poolMax: 5,
     poolIncrement: 1,
+    queueTimeout: 5000
   });
 
   console.log("Pool de conexión Oracle inicializado");
@@ -30,5 +31,6 @@ export async function getConnection() {
   if (!pool) {
     await initDB();
   }
-  return pool!.getConnection();
+  return pool!.getConnection();    // le digo "!" porque sé que no es null ya que aseguro que se creen
+  
 }
