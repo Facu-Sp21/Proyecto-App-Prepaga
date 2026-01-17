@@ -4,7 +4,7 @@ CREATE TABLE afiliado (
     dni_tipo     VARCHAR2(10) NOT NULL,
     nombre       VARCHAR2(50) NOT NULL,
     apellido     VARCHAR2(50) NOT NULL,
-    email        VARCHAR2(100),
+    email        VARCHAR2(100) NOT NULL,
     CONSTRAINT uq_afiliado_dni UNIQUE (dni_numero, dni_tipo)
 );
 
