@@ -6,16 +6,6 @@ export class AppError extends Error {
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
-//--------------------------------------------------------------------------------------------------------------------------------------------------------
-//IMPORTANTE: los errores de validacion se manejan en schemaValidation.ts para obtener mejores mensajes de error segun la validacion fallida gracias a zod
-//--------------------------------------------------------------------------------------------------------------------------------------------------------
-
-export function handleErrorParam(error: any, next: Function) {  //esta funcion ahorra repetir codigo en controllers
-  if (error instanceof AppError) {
-    return next(error);
-  }
-  return next(new InternalServerError());
-}
 
 export class NotFoundError extends AppError {
   constructor(message = "Recurso no encontrado") {
@@ -38,5 +28,11 @@ export class InternalServerError extends AppError {
 export class BadRequestError extends AppError {
   constructor(message = "Solicitud incorrecta") {
     super(message, 400);
+  }
+}
+
+export class alreadyExistsError extends AppError {
+  constructor(message = "El recurso ya existe") {
+    super(message, 409);
   }
 }

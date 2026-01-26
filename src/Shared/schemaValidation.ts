@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodError, ZodType } from "zod";
-import { InternalServerError } from "./errorsModel.js";
+import { InternalServerError, NotFoundError } from "./errorsModel.js";
 
 export type ValidationSchemas = {
   body?: ZodType<unknown>;
@@ -39,6 +39,6 @@ export const validate =
         });
       }
 
-      throw new InternalServerError();
+      throw new InternalServerError("Error interno del servidor2");
       };
   };
