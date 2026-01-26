@@ -1,6 +1,6 @@
-import {sFindAllAfiliados, sFindAfiliadoWithNro_afiliado, /* sCreateAfiliado */} from "./service.js";
+import {sFindAllAfiliados, sFindAfiliadoWithNro_afiliado, sCreateAfiliado} from "./service.js";
 import { Request, Response, NextFunction } from "express";
-import { handleErrorParam, InternalServerError, NotFoundError } from "../Shared/errorsModel.js";
+import { InternalServerError, NotFoundError } from "../Shared/errorsModel.js";
 
 export async function cFindAllAfiliados(req: Request, res: Response) {
     try {
@@ -15,22 +15,22 @@ export async function cFindAfiliadoWithNro_afiliado(req: Request, res: Response,
     try {
         const afiliado = await sFindAfiliadoWithNro_afiliado(res.locals.params.nro_afiliado);
         
-        if (afiliado === null) {
+        if (!afiliado) {
             throw new NotFoundError();
         }
 
         return res.status(200).json(afiliado);
 
     } catch (error) {
-        handleErrorParam(error, next);
+        next(error);
     }
 }
 
-/* export async function cCreateAfiliado(req: Request, res: Response, next: NextFunction) {
+export async function cCreateAfiliado(req: Request, res: Response, next: NextFunction) {
     try{
         const newAfiliado = await sCreateAfiliado(res.locals.body);
         return res.status(201).json(newAfiliado);
     }catch(error){
-        handleErrorParam(error, next);
+        next(error);
     }
-} */
+}

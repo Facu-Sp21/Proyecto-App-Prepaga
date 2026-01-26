@@ -1,12 +1,11 @@
 import {z} from 'zod'
-import { BadRequestError } from '../Shared/errorsModel.js';
 
 export const AfiliadoSchemaBody = z.object({
-    nro_afiliado: z.number('Debe se un numero').int().positive(),
+    nro_afiliado: z.number('Debe se un numero').int().positive().optional(),
     dni_numero: z.string().length(8, 'El DNI debe tener 8 caracteres'),
     dni_tipo: z.string().nonempty('El tipo de DNI es obligatorio'),
     nombre: z.string().nonempty('El nombre es obligatorio').trim(),
-    apellido: z.string().nonempty('El apellido es obligatorio'),
+    apellido: z.string().nonempty('El apellido es obligatorio').trim(),
     email: z.string().email('el email es invalido')
 });
 

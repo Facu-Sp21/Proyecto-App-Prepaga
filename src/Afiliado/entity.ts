@@ -1,5 +1,5 @@
 export class Afiliado {
-    nro_afiliado!: number;
+    nro_afiliado?: number;
     dni_numero!: string;
     dni_tipo!: string;
     nombre!: string;
