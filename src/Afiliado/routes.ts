@@ -1,13 +1,14 @@
 import { Router } from "express";
-import { cFindAllAfiliados,cFindAfiliadoWithNro_afiliado,cCreateAfiliado} from "./controller.js";
+import { cFindAllAfiliados,cFindAfiliadoWithNro_afiliado,cCreateAfiliado, cUpdateAfiliado} from "./controller.js";
 import { validate } from "../Shared/schemaValidation.js";
-import { AfiliadoSchemaBody, AfiliadoSchemaParams } from "./schema.js";
+import { AfiliadoSchemaBody, AfiliadoSchemaParams, AfiliadoSchemaBodyUpdate } from "./schema.js";
 
 export const afiliadoRouter = Router();
 
 afiliadoRouter.get('/', cFindAllAfiliados);
 afiliadoRouter.get('/:nro_afiliado',validate({params: AfiliadoSchemaParams}), cFindAfiliadoWithNro_afiliado);
 afiliadoRouter.post('/', validate({body: AfiliadoSchemaBody}), cCreateAfiliado);
+afiliadoRouter.put('/:nro_afiliado', validate({params: AfiliadoSchemaParams, body: AfiliadoSchemaBodyUpdate}), cUpdateAfiliado);
 
 
 

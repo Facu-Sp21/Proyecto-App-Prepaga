@@ -3,10 +3,18 @@ import {z} from 'zod'
 export const AfiliadoSchemaBody = z.object({
     nro_afiliado: z.number('Debe se un numero').int().positive().optional(),
     dni_numero: z.string().length(8, 'El DNI debe tener 8 caracteres'),
-    dni_tipo: z.string().nonempty('El tipo de DNI es obligatorio'),
-    nombre: z.string().nonempty('El nombre es obligatorio').trim(),
-    apellido: z.string().nonempty('El apellido es obligatorio').trim(),
+    dni_tipo: z.string().nonempty('El tipo de DNI es obligatorio').toUpperCase(),
+    nombre: z.string().nonempty('El nombre es obligatorio').trim().toUpperCase(),
+    apellido: z.string().nonempty('El apellido es obligatorio').trim().toUpperCase(),
     email: z.string().email('el email es invalido')
+});
+// es practicamente igual al de creacion pero permite objetos parciales
+export const AfiliadoSchemaBodyUpdate = z.object({
+    dni_numero: z.string().length(8, 'El DNI debe tener 8 caracteres').optional(),
+    dni_tipo: z.string().nonempty('El tipo de DNI es obligatorio').optional().transform(val => val ? val.toUpperCase() : val),
+    nombre: z.string().nonempty('El nombre es obligatorio').trim().optional().transform(val => val ? val.toUpperCase() : val),
+    apellido: z.string().nonempty('El apellido es obligatorio').trim().optional().transform(val => val ? val.toUpperCase() : val),
+    email: z.string().email('el email es invalido').optional()
 });
 
 export const AfiliadoSchemaParams = z.object({
@@ -19,3 +27,4 @@ export const AfiliadoSchemaParams = z.object({
     })
     .transform((val) => Number(val)) //  solo transforma si pasó la validación
 });
+
