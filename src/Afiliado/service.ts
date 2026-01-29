@@ -1,4 +1,4 @@
-import {rFindAllAfiliados, rFindAfiliadoWithNro_afiliado, rCreateAfiliado, rUpdateAfiliado} from "./repository.js";
+import {rFindAllAfiliados, rFindAfiliadoWithNro_afiliado, rCreateAfiliado, rUpdateAfiliado,rDeleteAfiliado} from "./repository.js";
 import { Afiliado } from "./entity.js";
 import { alreadyExistsError } from "../Shared/errorsModel.js";
 
@@ -33,6 +33,17 @@ export async function sUpdateAfiliado(nro_afiliado: number, afiliadoData: Partia
             // ORA-00001: unique constraint violated
             if (err.offset === 0 && err.message.includes('ORA-00001')) {
                 throw new alreadyExistsError("El afiliado con ese DNI o Email ya se encuentra registrado.");
+        }
+    }
+}
+
+export async function sDeleteAfiliado(nro_afiliado: number): Promise<void> {
+    try{
+        await rDeleteAfiliado(nro_afiliado);
+    }catch (err: any) {
+            // ORA-02292: integrity constraint violated - child record found
+            if (err.offset === 0 && err.message.includes('ORA-02292')) {
+                throw new alreadyExistsError("No se puede eliminar el afiliado porque tiene registros asociados.");
         }
     }
 }

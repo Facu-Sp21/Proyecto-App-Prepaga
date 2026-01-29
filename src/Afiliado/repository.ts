@@ -74,3 +74,16 @@ export async function rUpdateAfiliado(nro_afiliado: number, afiliadoData: Partia
     await conn.close();
   }
 }
+
+export async function rDeleteAfiliado(nro_afiliado: number): Promise<void> {
+    const conn = await getConnection();
+    try {
+        await conn.execute(
+            `DELETE FROM afiliado WHERE nro_afiliado = :nro_afiliado`,
+            { nro_afiliado: nro_afiliado }
+        );
+        await conn.commit();
+    } finally {
+        await conn.close();
+    }
+}

@@ -1,4 +1,4 @@
-import {sFindAllAfiliados, sFindAfiliadoWithNro_afiliado, sCreateAfiliado, sUpdateAfiliado} from "./service.js";
+import {sFindAllAfiliados, sFindAfiliadoWithNro_afiliado, sCreateAfiliado, sUpdateAfiliado, sDeleteAfiliado} from "./service.js";
 import { Request, Response, NextFunction } from "express";
 import { InternalServerError, NotFoundError } from "../Shared/errorsModel.js";
 
@@ -39,6 +39,15 @@ export async function cUpdateAfiliado(req: Request, res: Response, next: NextFun
     try {
         const updatedAfiliado = await sUpdateAfiliado(res.locals.params.nro_afiliado, res.locals.body);
         return res.status(200).json(updatedAfiliado);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function cDeleteAfiliado(req: Request, res: Response, next: NextFunction) {
+    try {
+        await sDeleteAfiliado(res.locals.params.nro_afiliado);
+        return res.status(204).send();
     } catch (error) {
         next(error);
     }
