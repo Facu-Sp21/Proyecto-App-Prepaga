@@ -19,7 +19,7 @@ findAllAFiliados,
 obtener un afiliado con su numero de afiliado,
 crear un afiliado con su datos validos,
 actualizar informacion de un afiliado con su numero de afiliado,
-agregar auth de usuarios para admin y afiliado permitiendo ciertas acciones segun el rol
+agregar auth de usuarios para admin y afigliado permitiendo ciertas acciones segun el rol
 afiliado solo puede ver y actualizar su informacion, menos nro_afiliado
 admin puede crear, ver, actualizar y eliminar afiliados
 */

@@ -27,4 +27,3 @@ export const AfiliadoSchemaParams = z.object({
     })
     .transform((val) => Number(val)) //  solo transforma si pasó la validación
 });
-

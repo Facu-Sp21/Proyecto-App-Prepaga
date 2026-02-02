@@ -1,5 +1,6 @@
 import express from 'express';
 import { afiliadoRouter } from './Afiliado/routes.js'; 
+import { planesRouter } from './Planes/routes.js';
 import dotenv from "dotenv";
 import { initDB } from './DB/connection.js';
 import { errorHandler } from './Shared/errorsHandler.js';
@@ -14,6 +15,7 @@ app.use(express.json());
 
 //Middlewares for Modules
 app.use('/afiliados', afiliadoRouter);
+app.use('/planes', planesRouter);
 
 app.use(errorHandler);
 
