@@ -266,7 +266,7 @@ CREATE TABLE beneficio_plan (
 CREATE TABLE afiliado_plan (
     id_plan NUMBER NOT NULL,
     nro_afiliado NUMBER NOT NULL,
-    fecha_hasta DATE NOT NULL,
+    fecha_hasta DATE NULL,
     fecha_desde DATE NOT NULL,
     
     CONSTRAINT pk_afiliado_plan PRIMARY KEY (id_plan, nro_afiliado, fecha_desde),

@@ -27,6 +27,13 @@ export async function initDB() {
   return pool;
 }
 
+export async function closeDB() {
+  if (pool) {
+    await pool.close(10); // espera hasta 10 segundos para cerrar conexiones activas
+    console.log("Pool de conexión Oracle cerrado");
+  }
+}
+
 export async function getConnection() {
   if (!pool) {
     await initDB();
